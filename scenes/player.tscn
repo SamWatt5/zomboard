@@ -121,7 +121,7 @@ region = Rect2(256, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4r5pv"]
 atlas = ExtResource("2_tuyoq")
-region = Rect2(768, 0, 32, 32)
+region = Rect2(640, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_60mlk"]
 animations = [{
@@ -518,11 +518,11 @@ shape = SubResource("RectangleShape2D_hqtel")
 
 [node name="BoardAnimations" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_60mlk")
-animation = &"bs_shuvit"
+animation = &"tail_manual"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(3, 3)
 
 [node name="CharacterAnimations" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_mx1m4")
-animation = &"bs_shuvit"
+animation = &"tail_manual"
