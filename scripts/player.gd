@@ -25,6 +25,8 @@ var trick_durations = {
 	"ollie": 0.5,
 	"kickflip": 0.5,
 	"heelflip": 0.5,
+	"fs_shuvit": 0.5,
+	"bs_shuvit": 0.5
 }
 
 ## Initializes the player character
@@ -38,6 +40,8 @@ func _ready():
 		sprite.sprite_frames.set_animation_loop("ollie", false)
 		sprite.sprite_frames.set_animation_loop("kickflip", false)
 		sprite.sprite_frames.set_animation_loop("heelflip", false)
+		sprite.sprite_frames.set_animation_loop("fs_shuvit", false)
+		sprite.sprite_frames.set_animation_loop("bs_shuvit", false)
 
 ## Main physics processing function - called every physics frame
 ## @param delta: Time elapsed since the previous frame
@@ -54,6 +58,8 @@ func _physics_process(delta: float) -> void:
 		"respawn": Input.is_action_pressed("respawn"),
 		"trick_left": Input.is_action_pressed("trick_left"),
 		"trick_right": Input.is_action_pressed("trick_right"),
+		"trick_up": Input.is_action_pressed("trick_up"),
+		"trick_down": Input.is_action_pressed("trick_down"),
 		"move_up": Input.is_action_pressed("move_up"),
 		"move_down": Input.is_action_pressed("move_down")
 	}
@@ -132,11 +138,10 @@ func handle_jump_and_tricks(delta: float, on_floor: bool, in_air: bool, input: D
 		update_trick_animation()
 
 	# Manual tricks
-	if on_floor:
-		if input["move_up"]:
-			play_both_animations("nose_manual")
-		elif input["move_down"]:
-			play_both_animations("tail_manual")
+	if input["move_up"]:
+		play_both_animations("nose_manual")
+	elif input["move_down"]:
+		play_both_animations("tail_manual")
 
 ## Sets the facing direction for both character and board sprites
 ## @param face_left: Boolean, true to face left, false to face right
@@ -176,21 +181,25 @@ func check_and_perform_tricks(input: Dictionary) -> void:
 	# Get input and determine which trick to perform based on facing direction
 	var perform_kickflip = false
 	var perform_heelflip = false
+	var perform_fs_shuvit = false
+	var perform_bs_shuvit = false
 	
 	# If facing right (default sprite direction)
 	if !board_animation.flip_h:
 		perform_kickflip = input["trick_left"]
 		perform_heelflip = input["trick_right"]
+		
 	# If facing left (flipped sprite)
 	else:
 		perform_kickflip = input["trick_right"]
 		perform_heelflip = input["trick_left"]
+
+	perform_fs_shuvit = input["trick_up"]
+	perform_bs_shuvit = input["trick_down"]
 	
 	# Handle kickflip
 	if perform_kickflip and (current_trick == "ollie" or current_trick == ""):
 		play_both_animations("kickflip")
-		board_animation.sprite_frames.set_animation_loop("kickflip", false)
-		character_animation.sprite_frames.set_animation_loop("kickflip", false)
 		current_trick = "kickflip"
 		trick_started = true
 		trick_timer = 0.0
@@ -199,12 +208,24 @@ func check_and_perform_tricks(input: Dictionary) -> void:
 	# Handle heelflip
 	if perform_heelflip and (current_trick == "ollie" or current_trick == ""):
 		play_both_animations("heelflip")
-		board_animation.sprite_frames.set_animation_loop("heelflip", false)
-		character_animation.sprite_frames.set_animation_loop("heelflip", false)
 		current_trick = "heelflip"
 		trick_started = true
 		trick_timer = 0.0
 		trick_duration = trick_durations["heelflip"]
+
+	if perform_fs_shuvit and (current_trick == "ollie" or current_trick == ""):
+		play_both_animations("fs_shuvit")
+		current_trick = "fs_shuvit"
+		trick_started = true
+		trick_timer = 0.0
+		trick_duration = trick_durations["fs_shuvit"]
+	
+	if perform_bs_shuvit and (current_trick == "ollie" or current_trick == ""):
+		play_both_animations("bs_shuvit")
+		current_trick = "bs_shuvit"
+		trick_started = true
+		trick_timer = 0.0
+		trick_duration = trick_durations["bs_shuvit"]
 
 ## Updates trick animations based on current trick
 func update_trick_animation() -> void:
@@ -216,6 +237,10 @@ func update_trick_animation() -> void:
 			update_trick_frame("kickflip")
 		"heelflip":
 			update_trick_frame("heelflip")
+		"fs_shuvit":
+			update_trick_frame("fs_shuvit")
+		"bs_shuvit":
+			update_trick_frame("bs_shuvit")
 
 ## Updates the ollie animation based on player's vertical velocity
 func update_ollie_animation() -> void:
